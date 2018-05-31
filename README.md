@@ -15,9 +15,14 @@ This system is made up of four main components:
 
 4. A simple React-based **web interface** to display the results from the video streaming server.
 
+## System Requirements
+
+1. A CUDA-enabled GPU
+2. The NVIDIA container runtime for Docker ([`nvidia-docker`](https://github.com/NVIDIA/nvidia-docker)) installed on your machine
+
 ## Running the System
 
-System deployment is managed through `docker-compose`. To start the system, run:
+Deployment is managed through `docker-compose`. To start the system, run:
 
 ```
 $ docker-compose up -d
@@ -29,7 +34,7 @@ This will start three Docker containers for the first three components:
 2. `ai2incubator/eog-detector` (built from `/detector`) to host the detector module on 
 3. `ai2incubator/eog-videoserver` (built from `/videoserver`) to host the video streaming server
 
-The React web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/) or through a CDN. For convenience, `docker-compose.yaml` includes a `dev` mode that additionally runs a fourth Docker container that serves the web interface locally for development purposes. To start the system in `dev` mode, run:
+The React web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/). For convenience, `docker-compose.yaml` includes a `dev` mode that additionally runs a fourth Docker container that serves the web interface locally for development purposes. To start the system in `dev` mode, run:
 
 (Fix)
 ```
@@ -40,4 +45,12 @@ Alternatively, you can also host the web interface through your local web server
 
 Port configurations for all four containers can be found in `docker-compose.yaml`.
 
-Contact: kohenchia@gmail.com
+## Deploying to Production
+
+Don't. This is a prototype designed to run on a single machine.
+
+To convert this into a production-ready application, you will at least want to break up the components into their own repositories, deploy them with a distributed container orchestration framework like [Kubernetes](https://kubernetes.io/), and host the web application through a CDN like [AWS CloudFront](https://aws.amazon.com/cloudfront/)
+
+## Contact
+
+kohenchia@gmail.com
