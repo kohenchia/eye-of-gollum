@@ -11,3 +11,4 @@ services:
     container_name: eog-videoserver
     ports:
       - "18080:8080"
+    command: python app.py --port 8080 --redis_host redis --redis_port 6379

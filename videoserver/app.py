@@ -10,40 +10,50 @@ Alternatively, run an aiohttp development server:
     $ python -m aiohttp.web -H localhost -P 8080 app:start_server
 
 """
-from aiohttp import web
-
-routes = web.RouteTableDef()
-
-
-@routes.get('/')
-async def main(request):
-    """
-    Returns a simple 200 OK response.
-    Can be used as a simple health check endpoint.
-    """
-    return web.json_response(data={
-        'status': 200
-    })
+import argparse
+import aioredis
+from aiohttp import web, log
+from routes import routes as main_routes
 
 
-@routes.get('/stream')
-async def get_next_frame(request):
-    """
-    Returns the next frame in an x/multipart response.
-    """
-    return web.Response(text=3)
-
-
-def init_server(argv):
+def init_server(redis_host='localhost', redis_port=6379):
     """
     Initializes the application server.
     """
+    log.server_logger.info('eog-videoserver: Initializing server...')
+
+    async def init_redis(app):
+        """
+        Initializes a Redis connection
+        """
+        log.server_logger.info('eog-videoserver: Initializing Redis connection...')
+        app['redis'] = await aioredis.create_redis(
+            (redis_host, redis_port),
+            encoding='utf-8'
+        )
+
+    async def close_redis(app):
+        """
+        Shut down Redis connection
+        """
+        log.server_logger.info('eog-videoserver: Shutting down Redis connection...')
+        app['redis'].close()
+
     app = web.Application()
-    app.add_routes(routes)
+    app.on_startup.append(init_redis)
+    app.on_shutdown.append(close_redis)
+    app.add_routes(main_routes)
     return app
 
 
 if __name__ == '__main__':
-    import sys
-    app = init_server(sys.argv)
-    web.run_app(app)
+    # Parse input arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--redis_host', required=True)
+    parser.add_argument('--redis_port', required=True)
+    parser.add_argument('--port', required=True)
+    args = parser.parse_args()
+
+    # Initialize and run the server
+    app = init_server(args.redis_host, args.redis_port)
+    web.run_app(app, port=args.port)
