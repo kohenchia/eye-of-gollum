@@ -46,4 +46,4 @@ def init_server(argv):
 if __name__ == '__main__':
     import sys
     app = init_server(sys.argv)
-    web.run_app(app, port=8777)  # TODO: Config
+    web.run_app(app)

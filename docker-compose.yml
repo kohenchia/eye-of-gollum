@@ -2,7 +2,12 @@ version: '3'
 services:
   redis:
     image: redis:alpine
+    container_name: eog-rediscache
     ports:
-      # This image exposes port 6379 internally.
-      # Map it to the host port for local development.
-      - "6379:6379"
+      - "16379:6379"
+  videoserver:
+    build: videoserver/.
+    image: ai2incubator/eog-videoserver:latest
+    container_name: eog-videoserver
+    ports:
+      - "18080:8080"
