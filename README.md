@@ -26,8 +26,8 @@ $ docker-compose up -d
 This will start three Docker containers for the first three components:
 
 1. `ai2incubator/eog-rediscache` (based on the [`redis:alpine`](https://hub.docker.com/_/redis/) image) to host the Redis cache
-2. `ai2incubator/eog-detector` (built from `detector.Dockerfile`) to host the detector module on 
-3. `ai2incubator/eog-videoserver` (built from `videoserver.Dockerfile`) to host the video streaming server
+2. `ai2incubator/eog-detector` (built from `/detector`) to host the detector module on 
+3. `ai2incubator/eog-videoserver` (built from `/videoserver`) to host the video streaming server
 
 The React web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/) or through a CDN. For convenience, `docker-compose.yaml` includes a `dev` mode that additionally runs a fourth Docker container that serves the web interface locally for development purposes. To start the system in `dev` mode, run:
 

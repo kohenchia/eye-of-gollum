@@ -5,8 +5,8 @@
 FROM python:3.6.5-alpine
 
 # Copy contents of adminweb into the container's /opt folder
-COPY adminweb /opt
-WORKDIR /opt
+COPY . /opt/videoserver
+WORKDIR /opt/videoserver
 
 # Install all Python requirements for the web server
 RUN pip install -r requirements.txt
