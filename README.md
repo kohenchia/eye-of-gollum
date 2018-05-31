@@ -30,20 +30,22 @@ $ docker-compose up -d
 
 This will start three Docker containers for the first three components:
 
-1. `ai2incubator/eog-rediscache` (based on the [`redis:alpine`](https://hub.docker.com/_/redis/) image) to host the Redis cache
-2. `ai2incubator/eog-detector` (built from `/detector`) to host the detector module on 
+1. `ai2incubator/eog-detector` (built from `/detector`) to host the detector module on 
+2. `ai2incubator/eog-rediscache` (based on the [`redis:alpine`](https://hub.docker.com/_/redis/) image) to host the Redis cache
 3. `ai2incubator/eog-videoserver` (built from `/videoserver`) to host the video streaming server
 
-The React web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/). For convenience, `docker-compose.yaml` includes a `dev` mode that additionally runs a fourth Docker container that serves the web interface locally for development purposes. To start the system in `dev` mode, run:
+The React web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/).
 
-(Fix)
+For convenience, `docker-compose.yaml` includes a `dev` mode that additionally runs a fourth Docker container that serves the web interface locally for development purposes. To start the system in `dev` mode, run:
+
 ```
+# TODO: FIX ME
 $ docker-compose up -d --dev
 ```
 
-Alternatively, you can also host the web interface through your local web server by mapping the `web` folder to a local port, or through a development Node.js / webpack server if you are actively developing on it.
-
 Port configurations for all four containers can be found in `docker-compose.yaml`.
+
+Alternatively, you can also host the web interface through your local web server by mapping the `web` folder to a local port, or through a development Node.js / webpack server if you are actively developing on it.
 
 ## Deploying to Production
 
