@@ -13,6 +13,3 @@ RUN apt-get update && apt-get install -y gcc
 
 # Install all Python requirements for the web server
 RUN pip install -r requirements.txt
-
-# Start the web server as the default container command. Default port: 8080
-CMD ["python", "app.py"]

@@ -12,3 +12,8 @@ services:
     ports:
       - "18080:8080"
     command: python app.py --port 8080 --redis_host redis --redis_port 6379
+  detector:
+    build: detector/.
+    image: ai2incubator/eog-detector:latest
+    container_name: eog-detector
+    command: python app.py --redis_host redis --redis_port 6379
