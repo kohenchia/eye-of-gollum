@@ -21,7 +21,7 @@ async def get_next_frame(request):
     """
     Returns the next frame in an x/multipart response.
     """
-    val = await request.app['redis'].get('x')
+    val = await request.app['redis'].get('frame')
     return web.json_response(data={
-        'x': val
+        'frame': val
     })

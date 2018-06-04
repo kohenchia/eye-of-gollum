@@ -33,6 +33,7 @@ def start_loop(redis_host='localhost', redis_port=6379):
             LOG.info('eog-detector: Shutting down gracefully...')
             break
 
+        # TODO: Delete this when pulling raw data from the camera
         time.sleep(1)
 
 

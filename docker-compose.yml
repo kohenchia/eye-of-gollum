@@ -11,9 +11,13 @@ services:
     container_name: eog-videoserver
     ports:
       - "18080:8080"
+    volumes:
+      - "./videoserver:/opt/videoserver"
     command: python app.py --port 8080 --redis_host redis --redis_port 6379
   detector:
     build: detector/.
     image: ai2incubator/eog-detector:latest
     container_name: eog-detector
+    volumes:
+      - "./detector:/opt/detector"
     command: python3 app.py --redis_host redis --redis_port 6379
