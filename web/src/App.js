@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
@@ -8,6 +7,15 @@ class App extends Component {
     this.state = {
       frame: null
     }
+  }
+  componentDidMount() {
+    fetch('/video/frame')
+      .then(ret => ret.json())
+      .then((ret) => {
+        this.setState({
+          frame: ret.frame
+        })
+      });
   }
   handleData(data) {
     console.log(typeof(data));
@@ -23,7 +31,8 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">AI2 Incubator Camera</h1>
         </header>
-        <img src={`data:image/jpeg;base64,${this.state.frame}`}/>
+        <img src={`data:image/jpeg;base64,${this.state.frame}`}
+             alt='AI2 Incubator Live Feed'/>
       </div>
     );
   }
