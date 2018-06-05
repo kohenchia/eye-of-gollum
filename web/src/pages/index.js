@@ -5,7 +5,7 @@ class HTML extends React.Component
     constructor(props) {
         super(props);
         this.state = {
-            frame: null
+            frame: null,
         }
     }
     componentDidMount() {
@@ -14,7 +14,7 @@ class HTML extends React.Component
             .then(
                 (result) => {
                     this.setState({
-                        frame: result.frame.substring(2, result.frame.length - 1)
+                        frame: result.frame,
                     });
                 },
                 (error) => {
