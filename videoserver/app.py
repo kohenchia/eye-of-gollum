@@ -10,23 +10,28 @@ Alternatively, run an aiohttp development server:
     $ python -m aiohttp.web -H localhost -P 8080 app:start_server
 
 """
+import sys
+import logging
 import argparse
 import aioredis
 from aiohttp import web, log
 from routes import routes as main_routes
+
+LOG_FORMAT = '%(asctime)s.%(msecs)03d [%(levelname)s] %(filename)s:%(lineno)d: %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT, datefmt='%H:%M:%S')
 
 
 def init_server(redis_host='localhost', redis_port=6379):
     """
     Initializes the application server.
     """
-    log.server_logger.info('eog-videoserver: Initializing server...')
+    log.server_logger.info('Initializing server...')
 
     async def init_redis(app):
         """
         Initializes a Redis connection
         """
-        log.server_logger.info('eog-videoserver: Initializing Redis connection...')
+        log.server_logger.info('Initializing Redis connection...')
         app['redis'] = await aioredis.create_redis(
             (redis_host, redis_port)
         )
@@ -35,7 +40,7 @@ def init_server(redis_host='localhost', redis_port=6379):
         """
         Shut down Redis connection
         """
-        log.server_logger.info('eog-videoserver: Shutting down Redis connection...')
+        log.server_logger.info('Shutting down Redis connection...')
         app['redis'].close()
 
     app = web.Application()

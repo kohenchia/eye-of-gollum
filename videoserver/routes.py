@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Video server endpoints"""
 import base64
+import aiohttp
 import logging
 
-from aiohttp import web
+from aiohttp import web, log
 
 routes = web.RouteTableDef()
-LOG = logging.getLogger(__name__)
 
 
 @routes.get('/')
@@ -50,11 +50,11 @@ async def websockets_stream_handler(request):
             if msg.data == 'close':
                 await ws.close()
             else:
-                frame = request.app['redis'].get('frame')
+                frame = await request.app['redis'].get('frame')
                 await ws.send_bytes(frame)
         elif msg.type == aiohttp.WSMsgType.ERROR:
-            LOG.error('WebSockets connection closed with exception %s' %
+            log.server_logger.error('WebSockets connection closed with exception %s' %
                   ws.exception())
 
-    LOG.info('WebSockets connection closed')
+    log.server_logger.info('WebSockets connection closed')
     return ws
