@@ -14,5 +14,6 @@
     "eject": "react-scripts eject",
     "deploy": "sudo cp -fr build/* /var/www/html/eyeofgollum/."
   },
-  "homepage": "http://172.16.20.70/eyeofgollum"
+  "homepage": "http://172.16.20.70/eyeofgollum",
+  "proxy": "http://172.16.20.70/eyeofgollum"
 }
