@@ -20,4 +20,4 @@ services:
     container_name: eog-detector
     volumes:
       - "./detector:/opt/detector"
-    command: python3 app.py --redis_host redis --redis_port 6379
+    command: python3 loop.py --stream_url rtsp://172.16.20.108:554/11 --redis_host redis --redis_port 6379
