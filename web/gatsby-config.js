@@ -1,4 +1,5 @@
 module.exports = {
+    pathPrefix: `/eyeofgollum`,
     plugins: [
         {
             resolve: `gatsby-plugin-typography`,

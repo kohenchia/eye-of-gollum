@@ -9,7 +9,7 @@ class HTML extends React.Component
         }
     }
     componentDidMount() {
-        fetch('/eyeofgollum/frame')
+        fetch('/eyeofgollum/video/frame')
             .then(res => res.json())
             .then(
                 (result) => {

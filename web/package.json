@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "gatsby": "^1.9.269",
+    "gatsby-cli": "^1.1.58",
     "gatsby-link": "^1.6.40",
     "gatsby-plugin-typography": "^1.7.18",
     "typography-theme-github": "^0.15.10"
