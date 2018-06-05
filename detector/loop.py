@@ -42,14 +42,11 @@ def start_loop(stream_url=None, redis_host='localhost', redis_port=6379):
         frame = camera.get_next_frame()
         frame = annotator.annotate(frame)
 
-        # Serialize frame to base64
+        # Save frame to cache as JPEG bytes
         image = Image.fromarray(frame)        
         raw_bytes = io.BytesIO()
         image.save(raw_bytes, format='JPEG')
-        image_b64 = str(base64.b64encode(raw_bytes.getvalue()))
-
-        # Save base64-serialized frame to cache
-        cache.set('frame', image_b64)
+        cache.set('frame', raw_bytes.getvalue())
 
         # Capture kill signals and terminate loop
         if killer.kill_now:

@@ -28,8 +28,7 @@ def init_server(redis_host='localhost', redis_port=6379):
         """
         log.server_logger.info('eog-videoserver: Initializing Redis connection...')
         app['redis'] = await aioredis.create_redis(
-            (redis_host, redis_port),
-            encoding='utf-8'
+            (redis_host, redis_port)
         )
 
     async def close_redis(app):

@@ -30,6 +30,7 @@ class IPCam(object):
         rgb_frame = frame[:, :, ::-1]
 
         # Downsize frame for faster processing
+        # TODO: Save raw frame to cache, then let downstream annotators do the resizing
         resized_rgb_frame = cv2.resize(rgb_frame, resize_dimensions)
 
         return resized_rgb_frame

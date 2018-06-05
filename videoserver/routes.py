@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Video server endpoints"""
+import base64
 import logging
 
 from aiohttp import web
@@ -24,9 +25,15 @@ async def frame_handler(request):
     """
     Returns the next frame in an x/multipart response.
     """
-    val = await request.app['redis'].get('frame')
+    frame_bytes = await request.app['redis'].get('frame')
+
+    # Serialize frame bytes to base64
+    if frame_bytes is not None:
+        frame = base64.b64encode(frame_bytes)
+        frame = frame.decode('utf-8')
+
     return web.json_response(data={
-        'frame': val
+        'frame': frame
     })
 
 
@@ -44,7 +51,7 @@ async def websockets_stream_handler(request):
                 await ws.close()
             else:
                 frame = request.app['redis'].get('frame')
-                await ws.send_str(frame)
+                await ws.send_bytes(frame)
         elif msg.type == aiohttp.WSMsgType.ERROR:
             LOG.error('WebSockets connection closed with exception %s' %
                   ws.exception())
