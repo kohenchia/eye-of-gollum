@@ -22,37 +22,36 @@ This system is made up of four main components:
 
 ## Running the System
 
-Deployment is managed through `docker-compose`. To start the system, run:
+The Redis cache, detector, and video server components are implemented as Docker containers. Deployment is managed through `docker-compose`. To start the system, run:
 
 ```
 $ docker-compose up -d
 ```
 
-This will start three Docker containers for the first three components:
+This will start three Docker containers:
 
-1. `eog-detector` (built from `/detector`) to host the detector module on 
-2. `eog-rediscache` (based on the [`redis:alpine`](https://hub.docker.com/_/redis/) image) to host the Redis cache
+1. `eog-rediscache` (based on the [`redis:alpine`](https://hub.docker.com/_/redis/) image) to host the Redis cache
+2. `eog-detector` (built from `/detector`) to host the detector module on 
 3. `eog-videoserver` (built from `/videoserver`) to host the video streaming server
 
-The React web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/).
-
-For convenience, `docker-compose.yaml` includes a `dev` mode that additionally runs a fourth Docker container that serves the web interface locally for development purposes. To start the system in `dev` mode, run:
+To start each container independently, run:
 
 ```
-# TODO: FIX ME
-$ docker-compose up -d --dev
+$ docker-compose up -d redis
+$ docker-compose up -d detector
+$ docker-compose up -d videoserver
 ```
 
-Port configurations for all four containers can be found in `docker-compose.yaml`.
+Port configurations for all containers can be found in `docker-compose.yaml`.
 
-Alternatively, you can also host the web interface through your local web server by mapping the `web` folder to a local port, or through a development Node.js / webpack server if you are actively developing on it.
+The React-based web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/). Alternatively, you can also host the web interface behind [Gatsby](https://www.gatsbyjs.org/)'s development server by running the following command in the `/web` folder:
+
+```
+$ gatsby develop
+```
 
 ## Deploying to Production
 
 Don't. This is a prototype designed to run on a single machine.
 
-To convert this into a production-ready application, you will at least want to break up the components into their own repositories, deploy them with a distributed container orchestration framework like [Kubernetes](https://kubernetes.io/), and host the web application through a CDN like [AWS CloudFront](https://aws.amazon.com/cloudfront/)
-
-## Contact
-
-kohenchia@gmail.com
+To convert this into a production-ready application, you will at least want to break up the components into their own repositories, deploy them in a distributed architecture using an orchestration framework like [Kubernetes](https://kubernetes.io/), and host the web application through a CDN like [AWS CloudFront](https://aws.amazon.com/cloudfront/)
