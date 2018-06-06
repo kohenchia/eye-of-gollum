@@ -1,4 +1,4 @@
-# Eye of Gollum: A Prototype Facial Badge System
+# eye-of-gollum: A Prototype Facial Badge System
 
 ## Overview
 
