@@ -1,0 +1,5 @@
+aiodns
+aiohttp
+aioredis
+cchardet
+Pillow

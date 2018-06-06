@@ -5,19 +5,26 @@ services:
     container_name: eog-rediscache
     ports:
       - "16379:6379"
-  videoserver:
-    build: videoserver/.
-    image: ai2incubator/eog-videoserver:latest
-    container_name: eog-videoserver
+  feed_ingestor_001:
+    build: feed_ingestor/.
+    image: ai2incubator/eog-feed-ingestor:latest
+    container_name: eog-feed-ingestor-001
+    volumes:
+      - "./feed_ingestor:/opt/feed_ingestor"
+    command: python3 loop.py --stream_name 001 --stream_url rtsp://172.16.20.108:554/11 --redis_host redis --redis_port 6379
+  annotator_001:
+    build: annotator/.
+    image: ai2incubator/eog-annotator:latest
+    container_name: eog-annotator-001
+    volumes:
+      - "./annotator:/opt/annotator"
+    command: python3 loop.py --stream_name 001 --redis_host redis --redis_port 6379
+  video_server_001:
+    build: video_server/.
+    image: ai2incubator/eog-video-server:latest
+    container_name: eog-video-server-001
     ports:
       - "18080:8080"
     volumes:
-      - "./videoserver:/opt/videoserver"
+      - "./video_server:/opt/video_server"
     command: python app.py --port 8080 --redis_host redis --redis_port 6379
-  detector:
-    build: detector/.
-    image: ai2incubator/eog-detector:latest
-    container_name: eog-detector
-    volumes:
-      - "./detector:/opt/detector"
-    command: python3 loop.py --stream_url rtsp://172.16.20.108:554/11 --redis_host redis --redis_port 6379

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """Video server endpoints"""
-import base64
 import aiohttp
+import base64
+import io
 import logging
+from PIL import Image
 
 from aiohttp import web, log
 
@@ -42,6 +44,7 @@ async def websockets_stream_handler(request):
     """
     Returns a WebSockets response to continuously stream frames.
     """
+    # TODO: Parse request args
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
@@ -50,8 +53,17 @@ async def websockets_stream_handler(request):
             if msg.data == 'close':
                 await ws.close()
             else:
-                frame = await request.app['redis'].get('frame')
-                await ws.send_bytes(frame)
+                # TODO: Configure stream source and size
+                image_bytes = await request.app['redis'].get('001_annotated')
+                image = Image.frombytes('RGB', (1920, 1080), image_bytes)
+
+                # Resize image and serialize to JPEG
+                image = image.resize((960, 540))
+                jpeg_bytes = io.BytesIO()
+                image.save(jpeg_bytes, format='JPEG')
+
+                # Return bytes to client
+                await ws.send_bytes(jpeg_bytes.getvalue())
         elif msg.type == aiohttp.WSMsgType.ERROR:
             log.server_logger.error('WebSockets connection closed with exception %s' %
                   ws.exception())

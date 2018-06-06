@@ -15,22 +15,27 @@ class IPCam(object):
             raise Exception('Must provide a valid stream URL. Received: {}'.format(stream_url))
 
         self.capture = cv2.VideoCapture(stream_url)
-
     
-    def get_next_frame(self, resize_dimensions=(640, 360)):
+    def get_next_frame(self):
         """
         Gets the next frame from the IP camera as a numpy array.
         """
         ret, frame = self.capture.read()
         if not ret:
-            logging.error('Unable to get frame from IP camera: {}'.format(ret))
-            return False
+            return None
 
         # Convert frame into RGB (from OpenCV's BGR format)
         rgb_frame = frame[:, :, ::-1]
+        return rgb_frame
+    
+    def __enter__(self):
+        """
+        Entry function for context statements
+        """
+        return self
 
-        # Downsize frame for faster processing
-        # TODO: Save raw frame to cache, then let downstream annotators do the resizing
-        resized_rgb_frame = cv2.resize(rgb_frame, resize_dimensions)
-
-        return resized_rgb_frame
+    def __exit__(self):
+        """
+        Shuts down the video capture gracefully
+        """
+        self.capture.release()

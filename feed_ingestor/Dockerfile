@@ -4,8 +4,8 @@
 FROM nvidia/cuda:9.1-cudnn7-devel
 
 # Copy contents of adminweb into the container's /opt folder
-COPY . /opt/detector
-WORKDIR /opt/detector
+COPY . /opt/feed_ingestor
+WORKDIR /opt/feed_ingestor
 
 # Environment variables to make Python use UTF-8 as the default encoding
 ENV LC_ALL C.UTF-8
