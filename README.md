@@ -8,7 +8,7 @@ This repository contains a system that runs facial recognition on a video feed i
 
 ## Architecture
 
-![Architecture](/images/arch.jpeg)
+![Architecture](/images/arch.png)
 
 This system is made up of five main components:
 
