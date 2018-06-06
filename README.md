@@ -44,11 +44,7 @@ $ docker-compose up -d videoserver
 
 Port configurations for all containers can be found in `docker-compose.yaml`.
 
-The React-based web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/). Alternatively, you can also host the web interface behind [Gatsby](https://www.gatsbyjs.org/)'s development server by running the following command in the `/web` folder:
-
-```
-$ gatsby develop
-```
+The React-based web interface should be hosted as static files directly behind a web server like [NGINX](https://www.nginx.com/). More detailed documentation is available in the README file in the `/web` folder.
 
 ## Deploying to Production
 
