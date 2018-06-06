@@ -1,8 +1,8 @@
-# eye-of-gollum: A Prototype Facial Badge System
+# eye-of-gollum: Experiments with real-time facial recognition
 
 ## Overview
 
-This repository contains a simple facial badge system that runs facial recognition on a video feed in real time and displays results through a web interface.
+This repository contains a system that runs facial recognition on a video feed in real time and displays results through a web interface.
 
 ## Architecture
 This system is made up of five main components:
