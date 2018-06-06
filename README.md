@@ -4,11 +4,11 @@
 
 This repository contains a system that runs facial recognition on a video feed in real time and displays results through a web interface.
 
-![Overview](https://bitbucket.org/kohenchia-ai2/eye-of-gollum/src/master/images/sample.jpg)
+![Overview](/images/sample.jpg)
 
 ## Architecture
 
-![Architecture](https://bitbucket.org/kohenchia-ai2/eye-of-gollum/src/master/images/arch.jpeg)
+![Architecture](/images/arch.jpeg)
 
 This system is made up of five main components:
 
