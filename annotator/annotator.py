@@ -1,35 +1,39 @@
-"""Module that adds bounding boxes to video frames around recognized faces."""
 import cv2
-import face_recognition
 import numpy as np
 from PIL import Image
 
-class Annotator(object):
+from s3fd import detector
 
-    def __init__(self):
+class Annotator(object):
+    """
+    Class that encapsulates a bounding box detector
+    """
+
+    def __init__(self, network='s3fd'):
         """
         Initializer
         """
         self.BOX_LINE_WIDTH = 3
         self.BOX_LINE_COLOR = (0, 255, 0)
+        if network == 's3fd':
+            self.detector = detector.Detector()
+        else:
+            raise Exception('Network {} not supported.'.format(network))
 
-    def annotate(self, image):
+    def annotate(self, img):
         """
-        Annotate frame with bounding boxes.
+        Annotates the image with bounding boxes.
+
+        :param img: A PIL image
+        :returns: A PIL image with bounding boxes
         """
-        arr = np.asarray(image)
+        arr = np.asarray(img)
+        face_locations = self.detector.detect(arr)
 
-        # TODO: Replace with a working annotator
-        # face_locations = face_recognition.face_locations(arr)
-        FAKE_SIZE = 200
-        FAKE_TOP = int(np.random.rand() * (1080 - FAKE_SIZE))
-        FAKE_LEFT = int(np.random.rand() * (1920 - FAKE_SIZE))
-        face_locations = [(FAKE_TOP, FAKE_LEFT, FAKE_TOP + FAKE_SIZE, FAKE_LEFT + FAKE_SIZE)]
-
-        for (top, right, bottom, left) in face_locations:
+        for (x1, y1, x2, y2) in face_locations:
             arr = cv2.rectangle(arr,
-                                (left, top),
-                                (right, bottom),
+                                (int(x1), int(y1)),
+                                (int(x2), int(y2)),
                                 self.BOX_LINE_COLOR,
                                 self.BOX_LINE_WIDTH)
 

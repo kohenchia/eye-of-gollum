@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 LOG = logging.getLogger(__name__)
 
 
-def start_loop(stream_name=None, redis_host='localhost', redis_port=6379):
+def start_loop(stream_name=None, network='s3fd', redis_host='localhost', redis_port=6379):
     """
     Starts the processing loop
     """
@@ -23,8 +23,8 @@ def start_loop(stream_name=None, redis_host='localhost', redis_port=6379):
     LOG.info('Initializing Redis cache...')
     cache = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
-    LOG.info('Initializing frame annotator...')
-    annotator = Annotator()
+    LOG.info('Initializing annotator...')
+    annotator = Annotator(network=network)
 
     LOG.info('Starting processing loop...')
     while True:
@@ -34,7 +34,7 @@ def start_loop(stream_name=None, redis_host='localhost', redis_port=6379):
             continue
 
         # Annotate with bounding boxes
-        # TODO: Get size from configs
+        # TODO: Get size from feed configs
         image = Image.frombytes('RGB', (1920, 1080), image_bytes)
         image = annotator.annotate(image)
 
@@ -51,10 +51,12 @@ if __name__ == '__main__':
     # Parse input arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--stream_name', required=True)
+    parser.add_argument('--network', required=True)
     parser.add_argument('--redis_host', required=True)
     parser.add_argument('--redis_port', required=True)
     args = parser.parse_args()
 
     start_loop(stream_name=args.stream_name,
+               network=args.network,
                redis_host=args.redis_host, 
                redis_port=args.redis_port)

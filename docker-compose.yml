@@ -18,7 +18,7 @@ services:
     container_name: eog-annotator-001
     volumes:
       - "./annotator:/opt/annotator"
-    command: python3 loop.py --stream_name 001 --redis_host redis --redis_port 6379
+    command: python3 loop.py --stream_name 001 --network s3fd --redis_host redis --redis_port 6379
   video_server_001:
     build: video_server/.
     image: ai2incubator/eog-video-server:latest
