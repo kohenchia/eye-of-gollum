@@ -1,4 +1,6 @@
 .vscode/
 .virtualenv/
+._*
 __pycache__/
+.pytest*
 *.swp

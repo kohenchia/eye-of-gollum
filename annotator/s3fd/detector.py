@@ -1,15 +1,16 @@
 from __future__ import print_function
 
-import os
-import sys
-import cv2
-import random
-import datetime
-import time
-import math
 import argparse
+import cv2
+import datetime
 import itertools
+import logging
+import math
 import numpy as np
+import os
+import random
+import sys
+import time
 
 import torch
 import torch.nn as nn
@@ -21,16 +22,20 @@ from .net import Net
 from .bbox import *
 
 torch.backends.cudnn.bencmark = True
+LOG = logging.getLogger(__name__)
 
 
 class Detector(object):
 
-    def __init__(self):
+    def __init__(self, model_path=None):
         """
         Initializer
         """
+        if not model_path:
+            raise Exception('model_path must be a valid path.')
+
         self.net = Net()
-        self.net.load_state_dict(torch.load('s3fd/models/001.pth'))
+        self.net.load_state_dict(torch.load(model_path))
         self.net.eval()
         if torch.cuda.is_available():
             self.net.cuda()
@@ -51,6 +56,7 @@ class Detector(object):
 
         predictions = self.net(img)  # Money shot!
 
+        _tic = time.time()
         bboxlist = []
 
         # Convert class predictions to softmax scores
@@ -91,5 +97,8 @@ class Detector(object):
 
         # Only use boxes with a score greater than 0.5
         bboxlist = bboxlist[bboxlist[:, -1] > 0.5, :]
+        bboxlist = bboxlist[:, :-1]
+        _toc = time.time()
+        LOG.info('Processing bbox results took: {}s'.format(_toc - _tic))
 
-        return bboxlist[:, :-1]
+        return bboxlist

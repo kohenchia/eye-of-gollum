@@ -16,7 +16,7 @@ class Annotator(object):
         self.BOX_LINE_WIDTH = 3
         self.BOX_LINE_COLOR = (0, 255, 0)
         if network == 's3fd':
-            self.detector = detector.Detector()
+            self.detector = detector.Detector('s3fd/models/001.pth')
         else:
             raise Exception('Network {} not supported.'.format(network))
 
@@ -36,5 +36,6 @@ class Annotator(object):
                                 (int(x2), int(y2)),
                                 self.BOX_LINE_COLOR,
                                 self.BOX_LINE_WIDTH)
+        ret = Image.fromarray(arr)
 
-        return Image.fromarray(arr)
+        return ret
