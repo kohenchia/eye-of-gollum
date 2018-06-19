@@ -32,7 +32,6 @@ class Detector(object):
         """
         Converts predictions (S3FD output) to a bboxlist
         """
-        _tic = time.time()
         bboxlist = []
 
         # -------------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ class Detector(object):
 
             # Get effective stride: 4, 8, 16, 32, 64, 128
             # (See arXiv paper for details)
-            stride = 2 ** (i + 2)                       
+            stride = 2 ** (i + 2)
 
             # Pick out the class scores from the second softmax channel into [H x W]
             softmax_scores = F.softmax(predictions[i * 2], dim=1)
@@ -66,10 +65,10 @@ class Detector(object):
             assert loc.shape == (4, FH, FW)
 
             # Generate feature map X, Y coordinates into two [H x W] arrays
-            axc, ayc = np.meshgrid(                     
+            axc, ayc = np.meshgrid(
                 np.arange(FW),
                 np.arange(FH)
-            )                          
+            )
             axc = torch.from_numpy(axc).cuda().type(loc.dtype)
             ayc = torch.from_numpy(ayc).cuda().type(loc.dtype)
             assert axc.shape == (FH, FW)
@@ -151,8 +150,8 @@ class Detector(object):
         while order.size > 0:
             i = order[0]
             keep.append(i)
-            xx1, yy1 = np.maximum(x1[i], x1[order[1:]]),np.maximum(y1[i], y1[order[1:]])
-            xx2, yy2 = np.minimum(x2[i], x2[order[1:]]),np.minimum(y2[i], y2[order[1:]])
+            xx1, yy1 = np.maximum(x1[i], x1[order[1:]]), np.maximum(y1[i], y1[order[1:]])
+            xx2, yy2 = np.minimum(x2[i], x2[order[1:]]), np.minimum(y2[i], y2[order[1:]])
 
             w, h = np.maximum(0.0, xx2 - xx1 + 1), np.maximum(0.0, yy2 - yy1 + 1)
             ovr = w * h / (areas[i] + areas[order[1:]] - w * h)
@@ -188,4 +187,3 @@ class Detector(object):
             LOG.debug('Processing bboxes took {}s'.format(_toc - _tic))
 
         return bbox_list
-
