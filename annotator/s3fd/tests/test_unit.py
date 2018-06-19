@@ -33,15 +33,15 @@ def test_detector(detector):
     predicted_bbox_list = detector.detect(np.asarray(i))
     # Expected bbox values were retrived from a forward pass
     # using the original (inefficient) double-loop code.
-    expected_bbox_list = np.array(
+    expected_bbox_list = torch.tensor(
         [[48.525726, 286.9632, 86.64511, 335.23447],
          [266.67667, 200.41855, 298.0504, 244.6362],
          [490.83972, 152.88602, 516.1749, 189.27315],
          [330.67038, 247.75795, 366.0774, 298.80145],
          [337.8342, 167.22401, 359.92166, 196.30225],
-         [553.79156, 51.886246, 568.62244, 74.27114],
+         [553.79156, 51.886246, 568.62244, 74.27113],
          [366.9683, 134.5618, 390.72498, 161.17648]]
-    ).astype(predicted_bbox_list.dtype)
+    ).cuda().type(predicted_bbox_list.dtype)
     assert len(predicted_bbox_list) >= 1
     assert len(predicted_bbox_list[0]) == 4
-    assert np.array_equal(expected_bbox_list, predicted_bbox_list)
+    assert torch.equal(expected_bbox_list, predicted_bbox_list)

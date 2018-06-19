@@ -1,25 +1,13 @@
 from __future__ import print_function
 
-import argparse
-import cv2
-import datetime
-import itertools
 import logging
-import math
 import numpy as np
-import os
-import random
-import sys
 import time
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
-from torch.autograd import Variable
 
 from .net import Net
-from .bbox import *
 
 torch.backends.cudnn.bencmark = True
 LOG = logging.getLogger(__name__)
@@ -40,7 +28,7 @@ class Detector(object):
         if torch.cuda.is_available():
             self.net.cuda()
 
-    def _fast_predictions_to_bbox_list(self, predictions):
+    def _predictions_to_bbox_list(self, predictions):
         """
         Converts predictions (S3FD output) to a bboxlist
         """
@@ -138,7 +126,7 @@ class Detector(object):
             return []
 
         # Run non-max supression against the bounding boxes
-        keep = nms(bboxlist.cpu().numpy(), 0.3)
+        keep = self._nms(bboxlist.cpu().numpy(), 0.3)
         bboxlist = bboxlist[keep, :]
 
         # Only use boxes with a score greater than 0.5
@@ -148,52 +136,31 @@ class Detector(object):
         else:
             return bboxlist[:, :-1]
 
-    def _predictions_to_bbox_list(self, predictions):
+    def _nms(self, dets, thresh):
         """
-        Converts predictions (neural network output) to a bboxlist
+        Non-max suppression
+        TODO: Convert to Pytorch code
         """
-        bboxlist = []
+        if 0 == len(dets):
+            return []
+        x1, y1, x2, y2, scores = dets[:, 0], dets[:, 1], dets[:, 2], dets[:, 3], dets[:, 4]
+        areas = (x2 - x1 + 1) * (y2 - y1 + 1)
+        order = scores.argsort()[::-1]
 
-        # Convert class predictions to softmax scores
-        for i in range(int(len(predictions)/2)):
-            predictions[i * 2] = F.softmax(predictions[i * 2], dim=1)
+        keep = []
+        while order.size > 0:
+            i = order[0]
+            keep.append(i)
+            xx1, yy1 = np.maximum(x1[i], x1[order[1:]]),np.maximum(y1[i], y1[order[1:]])
+            xx2, yy2 = np.minimum(x2[i], x2[order[1:]]),np.minimum(y2[i], y2[order[1:]])
 
-        # Convert location predictions to bounding boxes in the original image's scale
-        for i in range(int(len(predictions)/2)):
-            class_predictions = predictions[i * 2].data.cpu()
-            bbox_predictions = predictions[i * 2 + 1].data.cpu()
-            FB, FC, FH, FW = class_predictions.size()      # feature map size
-            stride = 2 ** (i + 2)             # 4, 8, 16, 32, 64, 128
+            w, h = np.maximum(0.0, xx2 - xx1 + 1), np.maximum(0.0, yy2 - yy1 + 1)
+            ovr = w * h / (areas[i] + areas[order[1:]] - w * h)
 
-            # For each location in the feature map, decode it with the prior to get the predicted bounding box
-            for hindex, windex in itertools.product(range(FH), range(FW)):
-                axc = stride / 2 + windex * stride
-                ayc = stride / 2 + hindex * stride
-                score = class_predictions[0, 1, hindex, windex]
-                loc = bbox_predictions[0, :, hindex, windex].contiguous().view(1, 4)
+            inds = np.where(ovr <= thresh)[0]
+            order = order[inds + 1]
 
-                if score < 0.05:
-                    continue
-
-                # (stride * 4) is the desired anchor size. Refer to arXiv paper.
-                priors = torch.Tensor([[axc / 1.0, ayc / 1.0, stride * 4 / 1.0, stride * 4 / 1.0]])
-                variances = [0.1, 0.2]
-                box = decode(loc, priors, variances)
-                x1, y1, x2, y2 = box[0] * 1.0
-                bboxlist.append([x1, y1, x2, y2, score])
-
-        bboxlist = np.array(bboxlist)
-        if 0 == len(bboxlist):
-            bboxlist = np.zeros((1, 5))
-
-        # Run non-max supression against the bounding boxes
-        keep = nms(bboxlist, 0.3)
-        bboxlist = bboxlist[keep, :]
-
-        # Only use boxes with a score greater than 0.5
-        bboxlist = bboxlist[bboxlist[:, -1] > 0.5, :]
-        bboxlist = bboxlist[:, :-1]
-        return bboxlist
+        return keep
 
     def detect(self, img):
         """
@@ -216,7 +183,7 @@ class Detector(object):
             LOG.debug('Forward pass took {}s'.format(_toc - _tic))
 
             _tic = time.time()
-            bbox_list = self._fast_predictions_to_bbox_list(predictions)
+            bbox_list = self._predictions_to_bbox_list(predictions)
             _toc = time.time()
             LOG.debug('Processing bboxes took {}s'.format(_toc - _tic))
 
