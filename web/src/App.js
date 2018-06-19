@@ -30,9 +30,6 @@ class App extends Component {
                 <img className="App-eog-video-feed"
                      src={`data:image/jpeg;base64,${this.state.frame}`}
                      alt='AI2 Incubator Live Feed' />
-                <div className="App-footnote">
-                    (These bounding boxes are fake. I'm still trying to develop a detector that works at scale.)
-                </div>
             </div>
         );
     }
