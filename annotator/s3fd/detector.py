@@ -213,12 +213,12 @@ class Detector(object):
             _tic = time.time()
             predictions = self.net(img)
             _toc = time.time()
-            LOG.info('Forward pass took {}s'.format(_toc - _tic))
+            LOG.debug('Forward pass took {}s'.format(_toc - _tic))
 
             _tic = time.time()
             bbox_list = self._fast_predictions_to_bbox_list(predictions)
             _toc = time.time()
-            LOG.info('Processing bboxes took {}s'.format(_toc - _tic))
+            LOG.debug('Processing bboxes took {}s'.format(_toc - _tic))
 
         return bbox_list
 
